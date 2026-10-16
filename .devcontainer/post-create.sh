@@ -10,7 +10,7 @@ set -euo pipefail
 #          非対話で作り直せるようにする（TTYが無い post-create で確認プロンプトを回避）。
 ( cd .agents/tools && CI=true pnpm install --frozen-lockfile )
 
-# git hooks (gitleaks等)
+# git hooks (betterleaks等)
 pre-commit install
 
 # agent-browser skill（インストール先判定のためプロジェクトルートで実行。本体は commit SHA で固定）
