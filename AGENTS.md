@@ -69,4 +69,4 @@ NOTES.md はこのプロジェクトの最重要ドキュメントです。書�
 ### ルール
 
 - `NOTES.md` と `project.yaml` の変更は関連するコードと一緒にコミットする
-- コミット前に `.git/hooks/pre-commit` が存在するか確認し、なければ `pre-commit install` を実行する（gitleaks によるシークレット漏洩防止）
+- コミット前に `.git/hooks/pre-commit` が存在するか確認し、なければ `pre-commit install` を実行する（betterleaks によるシークレット漏洩防止）
