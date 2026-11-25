@@ -33,6 +33,11 @@ AIエージェントと対話するだけで、技術ブログの企画から Wo
 
 エージェントが企画・検証・執筆・投稿の各フェーズを主導し、次に何をすべきかを案内します。あなたはアイデアを話して、フィードバックするだけ。
 
+## 主な機能
+
+- **日本語推敲（`yomiyasu` + `textlint`）**: 執筆フェーズの仕上げとして同梱の [`yomiyasu`](https://github.com/nanaism/yomiyasu) スキル（MIT ライセンス）による意味保持の日本語推敲を組み込んでいます。プロジェクト固有の語彙ルールは `.yomiyasu-words/` で管理でき、機械的なチェックは `textlint` が補完します。
+- **マルチモデル分担（設定可能）**: `.agents/models.yaml`（共通デフォルト、初期値は全ロール `inherit`）と `.agents/models.local.yaml`（`.gitignore` 対象の個人設定）により、`main` / `poc` / `drafting` / `polishing` / `review` の各ロールへ異なるモデルや並列クロスレビューを割り当てられます。`/setup-models` スキルで対話的に設定できます。詳細は `.agents/references/model-routing.md` を参照してください。
+
 ## セットアップ
 
 1. GitHub で「Use this template」からリポジトリを作成し、clone する

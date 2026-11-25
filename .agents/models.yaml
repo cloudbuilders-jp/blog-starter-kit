@@ -1,0 +1,123 @@
+# マルチモデル分担設定（テンプレート標準デフォルト）
+#
+# このファイルはリポジトリにコミットされる共通デフォルトです。
+# 個人や利用環境に合わせて変更したい場合は、同じ形式で
+# `.agents/models.local.yaml`（.gitignore 対象）を作成して上書きしてください。
+# 対話的に設定したい場合は `/setup-models` スキルを実行できます。
+#
+# 詳細な仕様とランタイム別の委譲ルールは
+# `.agents/references/model-routing.md` を参照してください。
+
+version: 1
+
+# 指定モデルが現在の環境で利用できないときの動作:
+#   ask              : ユーザーに確認してから続行/スキップを決める（推奨・既定）
+#   fallback_inherit : 親モデル（現在のセッションモデル）で自動続行し、その旨を報告
+#   error            : 処理を中断して設定見直しを促す
+on_unavailable: ask
+
+# ロールごとのモデル割り当て
+# - 値に `inherit` を指定すると、現在のセッション（親）モデルを使用します
+# - `review` 系（review / ideation_review / poc_review / draft_review）は
+#   単一指定だけでなく配列で複数モデルを指定し、並列クロスレビューを行えます
+# - 個別レビューロール（ideation_review / poc_review / draft_review）が
+#   未指定または null の場合は `review` の設定にフォールバックします
+roles:
+  # 対話進行・意思決定・NOTES.md/project.yaml の更新・最終統合
+  # （実行中モデルと異なる場合はセッション開始時に1行だけ通知して続行）
+  main: inherit
+
+  # PoC 検証の調査・poc/ 配下のコード実装・デバッグの委譲
+  poc: inherit
+
+  # blog/<article-id>/draft.md の下書き執筆・大幅な改稿
+  drafting: inherit
+
+  # yomiyasu スキルを用いた日本語推敲（.tmp/ 出力と検査まで）
+  polishing: inherit
+
+  # 企画・検証・下書きの第三者レビュー共通設定（読み取り専用）
+  # inherit の場合でもバイアス排除のため別コンテキストのサブエージェントで実行
+  review: inherit
+
+  # フェーズ別にレビュー担当を変えたい場合のみ指定（未指定なら `review` を継承）
+  # ideation_review: null
+  # poc_review: null
+  # draft_review: null
+
+# オプトイン外部 CLI ランナー定義（読み取り専用タスク限定）
+# ロール側で `runner: cli` と `cli_runner: <名前>` を明示指定した場合のみ使用します。
+cli_runners: {}
+
+# ============================================================
+# 設定例（`.agents/models.local.yaml` にコピーして使用）
+# ============================================================
+#
+# --- 例1: マルチプロバイダー構成（T3 Code / Cursor / Antigravity 等） ---
+# version: 1
+# on_unavailable: ask
+# roles:
+#   main:
+#     provider: claudeAgent
+#     model: claude-opus-5-5
+#     options:
+#       effort: high
+#   poc:
+#     provider: codex
+#     model: gpt-6.2-sol
+#     options:
+#       reasoningEffort: high
+#   drafting:
+#     provider: claudeAgent
+#     model: claude-opus-5-5
+#     options:
+#       effort: high
+#   polishing:
+#     provider: claudeAgent
+#     model: claude-opus-5-5
+#     options:
+#       effort: high
+#   review:
+#     - provider: claudeAgent
+#       model: claude-opus-5-5
+#       options:
+#         effort: high
+#     - provider: codex
+#       model: gpt-6.2-sol
+#       options:
+#         reasoningEffort: high
+#     - provider: antigravity
+#       model: gemini-4-neon
+#       options:
+#         thought_level: high
+#
+# --- 例2: Claude Code 単体でのモデル使い分け ---
+# version: 1
+# on_unavailable: ask
+# roles:
+#   main: inherit
+#   poc:
+#     model: sonnet
+#   drafting:
+#     model: opus
+#   polishing:
+#     model: opus
+#   review:
+#     model: opus
+#
+# --- 例3: 外部 CLI オプトイン（読み取り専用レビューのみ） ---
+# version: 1
+# on_unavailable: ask
+# cli_runners:
+#   codex-readonly:
+#     command: "codex exec --sandbox read-only --model {model} -"
+#     timeout_seconds: 300
+#   gemini-readonly:
+#     command: "gemini --model {model} -p"
+#     timeout_seconds: 300
+# roles:
+#   review:
+#     - inherit
+#     - runner: cli
+#       cli_runner: codex-readonly
+#       model: gpt-5.4
