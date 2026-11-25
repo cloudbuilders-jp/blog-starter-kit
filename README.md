@@ -36,7 +36,7 @@ AIエージェントと対話するだけで、技術ブログの企画から Wo
 ## 主な機能
 
 - **日本語推敲（`yomiyasu` + `textlint`）**: 執筆フェーズの仕上げとして同梱の [`yomiyasu`](https://github.com/nanaism/yomiyasu) スキル（MIT ライセンス）による意味保持の日本語推敲を組み込んでいます。プロジェクト固有の語彙ルールは `.yomiyasu-words/` で管理でき、機械的なチェックは `textlint` が補完します。
-- **マルチモデル分担（設定可能）**: `.agents/models.yaml`（共通デフォルト、初期値は全ロール `inherit`）と `.agents/models.local.yaml`（`.gitignore` 対象の個人設定）により、`main` / `poc` / `drafting` / `polishing` / `review` の各ロールへ異なるモデルや並列クロスレビューを割り当てられます。`/setup-models` スキルで対話的に設定できます。詳細は `.agents/references/model-routing.md` を参照してください。
+- **マルチモデル分担（設定可能）**: `.agents/models.yaml`（共通デフォルト、初期値は全ロール `inherit`）と `.agents/models.local.yaml`（`.gitignore` 対象の個人設定）により、`main` / `poc` / `drafting` / `polishing` / `review` の各ロールへ異なるモデルや並列クロスレビューを割り当てられます。単一プロバイダー環境（Claude Code 単体等）でも追加設定なしでそのまま動作し、Claude 内のモデル使い分け（Opus / Sonnet 等）にも対応します。詳細は `.agents/references/model-routing.md` を参照してください。
 
 ## セットアップ
 
@@ -57,6 +57,7 @@ AIエージェントと対話するだけで、技術ブログの企画から Wo
    ```
    スクリーンショット機能を使う場合は別途 Chromium が必要です（screenshot スキルが案内します）。
 5. エディタを再起動する（Claude Code: ターミナル再起動、Cursor: アプリ再起動）
+6. （任意）マルチモデル分担やモデル使い分けを行いたい場合は、エージェント上で `/setup-models` を実行して `.agents/models.local.yaml` を作成する（未設定でも全ロール `inherit` でそのまま利用可能）
 
 ## 推奨環境
 
@@ -64,7 +65,7 @@ Dev Containerを使用することを推奨します。
 Dev Containerならば、以下のツールが自動でインストールされます。
 
 - **Node.js + pnpm** — WordPress MCP サーバーの実行や Node ツール（textlint・agent-browser 等）に必要。Node パッケージは `package.json` / `pnpm-lock.yaml` でプロジェクトローカルに固定管理する
-- **uv** — アイキャッチ画像生成スクリプト等の Python ツール実行に必要（https://docs.astral.sh/uv/）
+- **uv / Python 3** — アイキャッチ画像生成スクリプト等の Python ツール実行（`uv`、https://docs.astral.sh/uv/）および `yomiyasu` の検査スクリプト実行（Python 3 標準ライブラリのみで動作）に必要
 - **agent-browser** (推奨) — ブラウザのスクリーンショット撮影に使用。Dev Container では自動導入され、それ以外の環境では screenshot スキルが必要時に導入を案内する（https://github.com/vercel-labs/agent-browser）
 
 ## Windows の場合
