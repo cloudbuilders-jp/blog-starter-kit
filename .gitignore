@@ -12,6 +12,12 @@
 # Claude Code local settings
 .claude/settings.local.json
 
+# Local multi-model routing overrides
+.agents/models.local.yaml
+
+# yomiyasu check state directory
+.yomiyasu/
+
 # Node (ツールは .agents/tools/ に隔離。pnpm-lock.yaml はコミットする)
 node_modules/
 # pnpm がコンテナ内(別FS)で生成するストアキャッシュ
